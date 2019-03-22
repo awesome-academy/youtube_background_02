@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">Youtube Background</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Sun Asterisk</string>
+    <string name="nav_header_subtitle">sun-asterisk.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_searchs">Searchs</string>
+    <string name="text_description">Description of video</string>
+    <string name="text_title">Title of video</string>
+    <string name="item_setting">Setting</string>
+    <string name="item_home">Home</string>
+    <string name="item_history">History</string>
+    <string name="title_communicate">Communicate</string>
+    <string name="item_share">Share</string>
+    <string name="item_introduce">Introduce</string>
 </resources>
