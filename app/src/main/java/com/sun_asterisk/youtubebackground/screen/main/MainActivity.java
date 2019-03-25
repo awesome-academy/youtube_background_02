@@ -1,4 +1,4 @@
-package com.sun_asterisk.youtubebackground.View;
+package com.sun_asterisk.youtubebackground.screen.main;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
