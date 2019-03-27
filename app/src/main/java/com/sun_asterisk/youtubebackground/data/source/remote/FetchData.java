@@ -3,6 +3,7 @@ package com.sun_asterisk.youtubebackground.data.source.remote;
 import android.os.AsyncTask;
 import com.sun_asterisk.youtubebackground.data.model.Video;
 import com.sun_asterisk.youtubebackground.data.source.VideoDataSource;
+import com.sun_asterisk.youtubebackground.utils.Constant;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -13,13 +14,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import static com.sun_asterisk.youtubebackground.utils.Constant.ITEM;
+import static com.sun_asterisk.youtubebackground.utils.Constant.SIZE;
 import static com.sun_asterisk.youtubebackground.utils.Constant.SNIPPET;
 import static com.sun_asterisk.youtubebackground.utils.Constant.SOURCE;
+import static com.sun_asterisk.youtubebackground.utils.Constant.THUMBNAIL;
 
 public class FetchData extends AsyncTask<String, Void, List<Video>> {
     private VideoDataSource.RemoteDataCallBack mRemoteDataCallBack;
     private List<Video> mVideos = new ArrayList<>();
     private String mData = "";
+    private Exception mError;
 
     public FetchData(VideoDataSource.RemoteDataCallBack dataCallBack) {
         mRemoteDataCallBack = dataCallBack;
@@ -39,7 +43,7 @@ public class FetchData extends AsyncTask<String, Void, List<Video>> {
             bufferedReader.close();
             mVideos = parseJson(mData);
         } catch (Exception e) {
-            mRemoteDataCallBack.onFail(e);
+            mError = e;
         }
         return mVideos;
     }
@@ -47,6 +51,10 @@ public class FetchData extends AsyncTask<String, Void, List<Video>> {
     @Override
     protected void onPostExecute(List<Video> videos) {
         super.onPostExecute(videos);
+        if (mError != null) {
+            mRemoteDataCallBack.onFail(mError);
+            return;
+        }
         mRemoteDataCallBack.onSuccess(videos);
     }
 
@@ -60,7 +68,9 @@ public class FetchData extends AsyncTask<String, Void, List<Video>> {
                     object.getJSONObject(SOURCE).getString(Video.VideoEntry.ID))
                     .setTitle(object.getString(Video.VideoEntry.TITLE))
                     .setDescription(object.getString(Video.VideoEntry.DESCRIPTION))
-                    .setThumbnail(object.getString(Video.VideoEntry.THUMBNAIL))
+                    .setThumbnail(object.getJSONObject(THUMBNAIL)
+                            .getJSONObject(SIZE)
+                            .getString(Constant.URL))
                     .build();
             videos.add(video);
         }

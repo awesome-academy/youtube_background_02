@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="@dimen/dp_8"
     >
@@ -12,6 +12,7 @@
         android:id="@+id/imageVideo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:scaleType="fitXY"
         android:src="@drawable/ic_launcher_background"
         tools:ignore="ContentDescription"
         />
@@ -27,9 +28,9 @@
         />
 
     <TextView
-        android:id="@+id/textDecription"
+        android:id="@+id/textDescription"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/dp_100"
         android:padding="@dimen/dp_8"
         android:text="@string/text_description"
         android:textSize="@dimen/sp_14"

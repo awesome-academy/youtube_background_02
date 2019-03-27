@@ -19,6 +19,6 @@ public class VideoRemoteDataSource implements VideoDataSource.RemoteDataSource {
     @Override
     public void getVideosRemote(VideoDataSource.RemoteDataCallBack listener) {
         FetchData fetchData = new FetchData(listener);
-        fetchData.execute(Constant.URL);
+        fetchData.execute(Constant.URL_API);
     }
 }
