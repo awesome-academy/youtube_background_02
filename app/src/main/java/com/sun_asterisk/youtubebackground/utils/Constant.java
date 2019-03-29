@@ -16,6 +16,6 @@ public class Constant {
             "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=";
     public static final String KEY = BuildConfig.API_KEY;
     public static final String PLAYLIST = BuildConfig.PLAYLIST;
-    public static final String MAX_RESULT = "&maxResults=50";
+    public static final String MAX_RESULT = "&maxResults=20";
     public static final String URL_API = API + PLAYLIST + "&key=" + KEY + MAX_RESULT;
 }

@@ -1,6 +1,9 @@
 package com.sun_asterisk.youtubebackground.data.model;
 
-public class Video {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Video implements Parcelable {
     private String mId;
     private String mTitle;
     private String mThumbnail;
@@ -15,6 +18,38 @@ public class Video {
         mThumbnail = videoBuilder.mThumbnail;
         mDescription = videoBuilder.mDescription;
     }
+
+    protected Video(Parcel in) {
+        mId = in.readString();
+        mTitle = in.readString();
+        mThumbnail = in.readString();
+        mDescription = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mId);
+        dest.writeString(mTitle);
+        dest.writeString(mThumbnail);
+        dest.writeString(mDescription);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Video> CREATOR = new Creator<Video>() {
+        @Override
+        public Video createFromParcel(Parcel in) {
+            return new Video(in);
+        }
+
+        @Override
+        public Video[] newArray(int size) {
+            return new Video[size];
+        }
+    };
 
     public String getId() {
         return mId;
@@ -47,6 +82,7 @@ public class Video {
     public void setDescription(String description) {
         mDescription = description;
     }
+
 
     public static class VideoBuilder {
         private String mId;

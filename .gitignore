@@ -62,3 +62,4 @@ fastlane/readme.md
 captures/
 
 /app/src/androidTest/java/com/sun_asterisk/youtubebackground/ExampleInstrumentedTest.java
+/gradle.properties

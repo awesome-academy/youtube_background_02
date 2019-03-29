@@ -11,12 +11,18 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.sun_asterisk.youtubebackground.R;
 import com.sun_asterisk.youtubebackground.data.model.Video;
+import com.sun_asterisk.youtubebackground.screen.play.OnItemClickListener;
 import java.util.ArrayList;
 import java.util.List;
 
 public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
     private Context mContext;
     private List<Video> mVideos;
+    private OnItemClickListener mOnItemClickListener;
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        mOnItemClickListener = listener;
+    }
 
     public HomeAdapter(Context context) {
         mContext = context;
@@ -48,22 +54,30 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
         return mVideos != null ? mVideos.size() : 0;
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView mImageVideo;
         TextView mTextTitle;
-        TextView mtextDescription;
+        TextView mTextDescription;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             mImageVideo = itemView.findViewById(R.id.imageVideo);
             mTextTitle = itemView.findViewById(R.id.textTitle);
-            mtextDescription = itemView.findViewById(R.id.textDescription);
+            mTextDescription = itemView.findViewById(R.id.textDescription);
+            itemView.setOnClickListener(this);
         }
 
         public void bindView(Video video) {
             Glide.with(mContext).load(video.getThumbnail()).into(mImageVideo);
             mTextTitle.setText(video.getTitle());
-            mtextDescription.setText(video.getDescription());
+            mTextDescription.setText(video.getDescription());
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (mOnItemClickListener != null){
+                mOnItemClickListener.onItemClick(getAdapterPosition());
+            }
         }
     }
 }
