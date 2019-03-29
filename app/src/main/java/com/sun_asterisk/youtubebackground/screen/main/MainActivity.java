@@ -2,10 +2,6 @@ package com.sun_asterisk.youtubebackground.screen.main;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -15,9 +11,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import com.sun_asterisk.youtubebackground.R;
 import com.sun_asterisk.youtubebackground.screen.home.HomeFragment;
+import com.sun_asterisk.youtubebackground.utils.Navigator;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    public Navigator mNavigator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +35,9 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         NavigationView navigationView = findViewById(R.id.navigationMain);
         navigationView.setNavigationItemSelectedListener(this);
-        addFragment(MainActivity.this, HomeFragment.newInstance(), R.layout.fragment_home);
+        mNavigator = new Navigator();
+        mNavigator.addFragment(MainActivity.this, HomeFragment.newInstance(),
+                R.layout.fragment_home);
     }
 
     @Override
@@ -68,7 +68,8 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.navigationHome:
-                addFragment(this, HomeFragment.newInstance(), R.layout.fragment_home);
+                mNavigator.addFragment(MainActivity.this, HomeFragment.newInstance(),
+                        R.layout.fragment_home);
                 break;
             case R.id.navigationHistory:
                 break;
@@ -82,20 +83,5 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawerLayout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    private void addFragment(FragmentActivity fragmentActivity, Fragment fragment, int idLayout) {
-        if (getSupportFragmentManager().findFragmentByTag(fragment.getClass().getSimpleName())
-                == null) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            switch (idLayout) {
-                case R.layout.fragment_home:
-                    fragmentTransaction.add(R.id.frameContent, HomeFragment.newInstance(),
-                            HomeFragment.class.getSimpleName());
-                    fragmentTransaction.commit();
-                    break;
-            }
-        }
     }
 }

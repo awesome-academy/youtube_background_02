@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/fragmentPlay"
+    android:background="@android:color/background_light"
+    android:orientation="vertical"
+    android:padding="@dimen/dp_8"
+    >
+    <FrameLayout
+        android:id="@+id/youTubePlayerView"
+        android:name="com.google.android.youtube.player.YouTubePlayerSupportFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        />
+
+    <TextView
+        android:id="@+id/textTitlePlay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/dp_8"
+        android:textSize="@dimen/sp_22"
+        android:textStyle="bold"
+        />
+    <TextView
+        android:id="@+id/textDescriptionPlay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/dp_8"
+        android:textSize="@dimen/sp_14"
+        />
+
+</LinearLayout>
