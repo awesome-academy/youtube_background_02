@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import com.sun_asterisk.youtubebackground.R;
 import com.sun_asterisk.youtubebackground.screen.home.HomeFragment;
+import com.sun_asterisk.youtubebackground.screen.search.SearchFragment;
 import com.sun_asterisk.youtubebackground.utils.Navigator;
 
 public class MainActivity extends AppCompatActivity
@@ -59,7 +60,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.actionSearch) {
-            return true;
+            mNavigator.addFragment(MainActivity.this, SearchFragment.newInstance(),
+                    R.layout.fragment_search);
         }
         return super.onOptionsItemSelected(item);
     }
