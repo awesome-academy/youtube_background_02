@@ -21,9 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomeFragment extends Fragment implements HomeContract.View, OnItemClickListener {
-    private HomeContract.Presenter mPresenter;
     private HomeAdapter mHomeAdapter;
-    private VideoRepository mVideoRepository;
     private Navigator mNavigator;
     private ArrayList<Video> mVideos;
 
@@ -37,9 +35,10 @@ public class HomeFragment extends Fragment implements HomeContract.View, OnItemC
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(mHomeAdapter);
         mHomeAdapter.setOnItemClickListener(HomeFragment.this);
-        mVideoRepository = VideoRepository.getInstance(VideoRemoteDataSource.getInstance());
-        mPresenter = new HomePresenter(this, mVideoRepository);
-        mPresenter.getVideos();
+        VideoRepository videoRepository =
+                VideoRepository.getInstance(VideoRemoteDataSource.getInstance());
+        HomeContract.Presenter presenter = new HomePresenter(this, videoRepository);
+        presenter.getVideos();
         mNavigator = new Navigator();
         return view;
     }
