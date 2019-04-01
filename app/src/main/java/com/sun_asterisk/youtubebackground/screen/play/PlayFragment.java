@@ -6,6 +6,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -23,10 +26,23 @@ public class PlayFragment extends Fragment {
     private static final String EXTRA_LIST = "EXTRA_LIST";
     private YouTubePlayer mYouTubePlayer;
     private int mPosition;
-    private List<Video> mVideos;
     private View mView;
-    private YouTubePlayerSupportFragment mYouTubePlayerSupportFragment;
     TextView mTextTitle, mTextDescription;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.main, menu);
+        MenuItem item = menu.findItem(R.id.actionSearch);
+        item.setVisible(false);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 
     public static PlayFragment newInstance(int position, ArrayList<Video> videos) {
         PlayFragment fragment = new PlayFragment();
@@ -48,12 +64,13 @@ public class PlayFragment extends Fragment {
     }
 
     private void initView() {
-        mYouTubePlayerSupportFragment = YouTubePlayerSupportFragment.newInstance();
+        YouTubePlayerSupportFragment youTubePlayerSupportFragment =
+                YouTubePlayerSupportFragment.newInstance();
         FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.youTubePlayerView, mYouTubePlayerSupportFragment).commit();
+        fragmentTransaction.add(R.id.youTubePlayerView, youTubePlayerSupportFragment).commit();
         mTextTitle = mView.findViewById(R.id.textTitlePlay);
         mTextDescription = mView.findViewById(R.id.textDescriptionPlay);
-        mYouTubePlayerSupportFragment.initialize(Constant.KEY,
+        youTubePlayerSupportFragment.initialize(Constant.KEY,
                 new YouTubePlayer.OnInitializedListener() {
 
                     @Override
@@ -76,9 +93,13 @@ public class PlayFragment extends Fragment {
 
     private void getData() {
         Bundle bundle = getArguments();
-        mPosition = bundle.getInt(EXTRA_POSITION);
-        mVideos = bundle.getParcelableArrayList(EXTRA_LIST);
-        mTextTitle.setText(mVideos.get(mPosition).getTitle());
-        mTextDescription.setText(mVideos.get(mPosition).getDescription());
+        if (bundle != null) {
+            mPosition = bundle.getInt(EXTRA_POSITION);
+            List<Video> videos = bundle.getParcelableArrayList(EXTRA_LIST);
+            if (videos != null) {
+                mTextTitle.setText(videos.get(mPosition).getTitle());
+                mTextDescription.setText(videos.get(mPosition).getDescription());
+            }
+        }
     }
 }

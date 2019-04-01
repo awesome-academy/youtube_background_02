@@ -20,11 +20,11 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
     private List<Video> mVideos;
     private OnItemClickListener mOnItemClickListener;
 
-    public void setOnItemClickListener(OnItemClickListener listener) {
+    void setOnItemClickListener(OnItemClickListener listener) {
         mOnItemClickListener = listener;
     }
 
-    public HomeAdapter(Context context) {
+    HomeAdapter(Context context) {
         mContext = context;
         mVideos = new ArrayList<>();
     }
@@ -67,7 +67,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
             itemView.setOnClickListener(this);
         }
 
-        public void bindView(Video video) {
+        void bindView(Video video) {
             Glide.with(mContext).load(video.getThumbnail()).into(mImageVideo);
             mTextTitle.setText(video.getTitle());
             mTextDescription.setText(video.getDescription());

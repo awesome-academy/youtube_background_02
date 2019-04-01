@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.sun_asterisk.youtubebackground.R;
 import com.sun_asterisk.youtubebackground.screen.play.OnItemClickListener;
 import java.util.ArrayList;
@@ -69,8 +68,6 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         public void onClick(View v) {
             if (mOnItemClickListener != null) {
                 mOnItemClickListener.onItemClick(getAdapterPosition());
-                Toast.makeText(mContext, mTitles.get(getAdapterPosition()), Toast.LENGTH_SHORT)
-                        .show();
             }
         }
     }
