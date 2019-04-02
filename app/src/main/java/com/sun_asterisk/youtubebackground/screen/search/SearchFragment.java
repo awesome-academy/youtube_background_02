@@ -1,5 +1,7 @@
 package com.sun_asterisk.youtubebackground.screen.search;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -29,10 +31,16 @@ import java.util.List;
 public class SearchFragment extends Fragment
         implements SearchContract.View, OnItemClickListener, SearchView.OnQueryTextListener,
         MenuItem.OnActionExpandListener {
+    private static final String PREFS = "PREFS";
+    private static final String KEYWORD = "KEYWORD";
+    private static final String SEARCH = "Search";
+    private static final String ADD = ",";
     private List<String> mTitles;
     private SearchAdapter mSearchAdapter;
     private List<String> mFilteredValues;
+    private List<String> mHistory;
     private ArrayList<Video> mVideos;
+    private String mNewText;
     private Navigator mNavigator;
 
     public static SearchFragment newInstance() {
@@ -47,7 +55,9 @@ public class SearchFragment extends Fragment
         for (int i = 0; i < mVideos.size(); i++) {
             mTitles.add(mVideos.get(i).getTitle());
         }
-        mSearchAdapter.setData(mTitles);
+        mHistory.clear();
+        loadKeyWords();
+        mSearchAdapter.setData(mHistory);
     }
 
     @Override
@@ -75,6 +85,7 @@ public class SearchFragment extends Fragment
                 VideoRepository.getInstance(VideoRemoteDataSource.getInstance());
         SearchContract.Presenter presenter = new SearchPresenter(this, videoRepository);
         mFilteredValues = new ArrayList<>();
+        mHistory = new ArrayList<>();
         presenter.getVideos();
     }
 
@@ -83,7 +94,8 @@ public class SearchFragment extends Fragment
         RecyclerView recyclerView = view.findViewById(R.id.recycleViewSearchVideo);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(mSearchAdapter);
-        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayout.VERTICAL));
+        recyclerView.addItemDecoration(
+                new DividerItemDecoration(getContext(), LinearLayout.VERTICAL));
         mSearchAdapter.setOnItemClickListener(SearchFragment.this);
         mNavigator = new Navigator();
     }
@@ -95,15 +107,42 @@ public class SearchFragment extends Fragment
         MenuItem searchItem = menu.findItem(R.id.actionSearch);
         searchItem.setVisible(true);
         SearchView searchView = (SearchView) searchItem.getActionView();
-        searchView.setQueryHint("Search");
+        searchView.setQueryHint(SEARCH);
         searchView.setOnQueryTextListener(this);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public void onItemClick(int position) {
+        saveKeyWords();
         mNavigator.addFragment(getActivity(), PlayFragment.newInstance(position, mVideos),
                 R.layout.fragment_play);
+    }
+
+    private void saveKeyWords() {
+        if (mNewText != null) {
+            mHistory.add(mNewText);
+        }
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String keyWord : mHistory) {
+            stringBuilder.append(keyWord);
+            stringBuilder.append(ADD);
+        }
+        SharedPreferences sharedPreferences =
+                getActivity().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(KEYWORD, stringBuilder.toString());
+        editor.commit();
+    }
+
+    private void loadKeyWords() {
+        SharedPreferences sharedPreferences =
+                getActivity().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+        String mKeyWords = sharedPreferences.getString(KEYWORD, "");
+        String[] mKeyList = mKeyWords.split(ADD);
+        for (int i = 0; i < mKeyList.length; i++) {
+            mHistory.add(mKeyList[i]);
+        }
     }
 
     @Override
@@ -113,14 +152,15 @@ public class SearchFragment extends Fragment
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        if (newText == null || newText.trim().isEmpty()) {
+        mNewText = newText;
+        if (mNewText == null || mNewText.trim().isEmpty()) {
             resetSearch();
             return false;
         } else {
             mFilteredValues.clear();
             mFilteredValues.addAll(mTitles);
             for (String value : mTitles) {
-                if (!value.toLowerCase().contains(newText.toLowerCase())) {
+                if (!value.toLowerCase().contains(mNewText.toLowerCase())) {
                     mFilteredValues.remove(value);
                 }
             }
@@ -130,7 +170,9 @@ public class SearchFragment extends Fragment
     }
 
     private void resetSearch() {
-        mSearchAdapter.setData(mTitles);
+        mHistory.clear();
+        loadKeyWords();
+        mSearchAdapter.setData(mHistory);
     }
 
     @Override
