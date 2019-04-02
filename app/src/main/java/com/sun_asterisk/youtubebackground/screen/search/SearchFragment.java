@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -13,12 +14,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 import com.sun_asterisk.youtubebackground.R;
 import com.sun_asterisk.youtubebackground.data.model.Video;
 import com.sun_asterisk.youtubebackground.data.source.remote.VideoRemoteDataSource;
 import com.sun_asterisk.youtubebackground.data.source.repository.VideoRepository;
 import com.sun_asterisk.youtubebackground.screen.play.OnItemClickListener;
+import com.sun_asterisk.youtubebackground.screen.play.PlayFragment;
+import com.sun_asterisk.youtubebackground.utils.Navigator;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +32,8 @@ public class SearchFragment extends Fragment
     private List<String> mTitles;
     private SearchAdapter mSearchAdapter;
     private List<String> mFilteredValues;
+    private ArrayList<Video> mVideos;
+    private Navigator mNavigator;
 
     public static SearchFragment newInstance() {
         return new SearchFragment();
@@ -35,7 +41,8 @@ public class SearchFragment extends Fragment
 
     @Override
     public void onGetVideoSuccess(List<Video> videos) {
-        List<Video> mVideos = new ArrayList<>(videos);
+        mVideos = new ArrayList<>();
+        mVideos.addAll(videos);
         mTitles = new ArrayList<>();
         for (int i = 0; i < mVideos.size(); i++) {
             mTitles.add(mVideos.get(i).getTitle());
@@ -76,15 +83,17 @@ public class SearchFragment extends Fragment
         RecyclerView recyclerView = view.findViewById(R.id.recycleViewSearchVideo);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(mSearchAdapter);
+        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayout.VERTICAL));
         mSearchAdapter.setOnItemClickListener(SearchFragment.this);
+        mNavigator = new Navigator();
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
         inflater.inflate(R.menu.menu_fragment_search, menu);
         MenuItem searchItem = menu.findItem(R.id.actionSearch);
+        searchItem.setVisible(true);
         SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setQueryHint("Search");
         searchView.setOnQueryTextListener(this);
@@ -93,7 +102,8 @@ public class SearchFragment extends Fragment
 
     @Override
     public void onItemClick(int position) {
-
+        mNavigator.addFragment(getActivity(), PlayFragment.newInstance(position, mVideos),
+                R.layout.fragment_play);
     }
 
     @Override
@@ -110,7 +120,6 @@ public class SearchFragment extends Fragment
             mFilteredValues.clear();
             mFilteredValues.addAll(mTitles);
             for (String value : mTitles) {
-
                 if (!value.toLowerCase().contains(newText.toLowerCase())) {
                     mFilteredValues.remove(value);
                 }
