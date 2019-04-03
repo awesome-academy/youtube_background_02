@@ -26,7 +26,9 @@ import com.sun_asterisk.youtubebackground.screen.play.OnItemClickListener;
 import com.sun_asterisk.youtubebackground.screen.play.PlayFragment;
 import com.sun_asterisk.youtubebackground.utils.Navigator;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class SearchFragment extends Fragment
         implements SearchContract.View, OnItemClickListener, SearchView.OnQueryTextListener,
@@ -95,7 +97,7 @@ public class SearchFragment extends Fragment
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(mSearchAdapter);
         recyclerView.addItemDecoration(
-                new DividerItemDecoration(getContext(), LinearLayout.VERTICAL));
+                new DividerItemDecoration(Objects.requireNonNull(getContext()), LinearLayout.VERTICAL));
         mSearchAdapter.setOnItemClickListener(SearchFragment.this);
         mNavigator = new Navigator();
     }
@@ -129,20 +131,19 @@ public class SearchFragment extends Fragment
             stringBuilder.append(ADD);
         }
         SharedPreferences sharedPreferences =
-                getActivity().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+                Objects.requireNonNull(getActivity()).getSharedPreferences(PREFS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(KEYWORD, stringBuilder.toString());
-        editor.commit();
+        editor.apply();
     }
 
     private void loadKeyWords() {
         SharedPreferences sharedPreferences =
-                getActivity().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+                Objects.requireNonNull(getActivity()).getSharedPreferences(PREFS, Context.MODE_PRIVATE);
         String mKeyWords = sharedPreferences.getString(KEYWORD, "");
+        assert mKeyWords != null;
         String[] mKeyList = mKeyWords.split(ADD);
-        for (int i = 0; i < mKeyList.length; i++) {
-            mHistory.add(mKeyList[i]);
-        }
+        Collections.addAll(mHistory, mKeyList);
     }
 
     @Override

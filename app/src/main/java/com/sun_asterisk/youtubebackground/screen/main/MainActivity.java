@@ -1,6 +1,9 @@
 package com.sun_asterisk.youtubebackground.screen.main;
 
+import android.content.ComponentName;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import com.sun_asterisk.youtubebackground.R;
 import com.sun_asterisk.youtubebackground.screen.home.HomeFragment;
+import com.sun_asterisk.youtubebackground.screen.play.PlayService;
 import com.sun_asterisk.youtubebackground.screen.search.SearchFragment;
 import com.sun_asterisk.youtubebackground.utils.Navigator;
 
@@ -19,11 +23,16 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     public Navigator mNavigator;
 
+    private ServiceConnection mConnection;
+    private PlayService mService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
+        startService(PlayService.getIntent(this));
+        initServiceConnection();
     }
 
     private void initView() {
@@ -40,6 +49,22 @@ public class MainActivity extends AppCompatActivity
         mNavigator = new Navigator();
         mNavigator.addFragment(MainActivity.this, HomeFragment.newInstance(),
                 R.layout.fragment_home);
+    }
+
+    private void initServiceConnection() {
+        mConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                PlayService.ServicePlay myBinder = (PlayService.ServicePlay) service;
+                mService = myBinder.getService();
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+
+            }
+        };
+        bindService(PlayService.getIntent(this), mConnection, BIND_AUTO_CREATE);
     }
 
     @Override
@@ -86,5 +111,15 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawerLayout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(mConnection);
+    }
+
+    public PlayService getService() {
+        return mService;
     }
 }
