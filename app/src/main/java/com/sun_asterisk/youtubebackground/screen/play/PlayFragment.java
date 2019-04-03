@@ -12,22 +12,23 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import com.google.android.youtube.player.YouTubeInitializationResult;
-import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.sun_asterisk.youtubebackground.R;
 import com.sun_asterisk.youtubebackground.data.model.Video;
-import com.sun_asterisk.youtubebackground.utils.Constant;
+import com.sun_asterisk.youtubebackground.screen.main.MainActivity;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class PlayFragment extends Fragment {
     private static final String EXTRA_POSITION = "EXTRA_POSITION";
     private static final String EXTRA_LIST = "EXTRA_LIST";
-    private YouTubePlayer mYouTubePlayer;
+    private YouTubePlayerSupportFragment mYouTubePlayerSupportFragment;
     private int mPosition;
     private View mView;
+    private static PlayService mPlayService;
     TextView mTextTitle, mTextDescription;
+    private List<Video> mVideos;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,43 +64,38 @@ public class PlayFragment extends Fragment {
         return mView;
     }
 
-    private void initView() {
-        YouTubePlayerSupportFragment youTubePlayerSupportFragment =
-                YouTubePlayerSupportFragment.newInstance();
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mPlayService = ((MainActivity) Objects.requireNonNull(getActivity())).getService();
+        setViewYoutubePlayer();
         FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.youTubePlayerView, youTubePlayerSupportFragment).commit();
+        mPlayService.playVideo(mPosition, fragmentTransaction);
+    }
+
+    private void setViewYoutubePlayer() {
+        mYouTubePlayerSupportFragment = mPlayService.getYouTubePlayerSupportFragment();
+        if (mVideos != null) {
+            mTextTitle.setText(mVideos.get(mPosition).getTitle());
+            mTextDescription.setText(mVideos.get(mPosition).getDescription());
+        }
+    }
+
+    private void initView() {
         mTextTitle = mView.findViewById(R.id.textTitlePlay);
         mTextDescription = mView.findViewById(R.id.textDescriptionPlay);
-        youTubePlayerSupportFragment.initialize(Constant.KEY,
-                new YouTubePlayer.OnInitializedListener() {
-
-                    @Override
-                    public void onInitializationSuccess(YouTubePlayer.Provider arg0,
-                            YouTubePlayer youTubePlayer, boolean isFullScreen) {
-                        if (!isFullScreen) {
-                            mYouTubePlayer = youTubePlayer;
-                            mYouTubePlayer.setFullscreen(false);
-                            mYouTubePlayer.loadPlaylist(Constant.PLAYLIST, mPosition, 0);
-                            mYouTubePlayer.play();
-                        }
-                    }
-
-                    @Override
-                    public void onInitializationFailure(YouTubePlayer.Provider arg0,
-                            YouTubeInitializationResult arg1) {
-                    }
-                });
     }
 
     private void getData() {
         Bundle bundle = getArguments();
         if (bundle != null) {
             mPosition = bundle.getInt(EXTRA_POSITION);
-            List<Video> videos = bundle.getParcelableArrayList(EXTRA_LIST);
-            if (videos != null) {
-                mTextTitle.setText(videos.get(mPosition).getTitle());
-                mTextDescription.setText(videos.get(mPosition).getDescription());
-            }
+            mVideos = bundle.getParcelableArrayList(EXTRA_LIST);
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 }

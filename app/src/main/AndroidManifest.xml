@@ -3,6 +3,8 @@
     package="com.sun_asterisk.youtubebackground">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,6 +12,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <service
+            android:name=".screen.play.PlayService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
+
         <activity
             android:name=".screen.main.MainActivity"
             android:label="@string/app_name"
