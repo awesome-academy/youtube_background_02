@@ -14,4 +14,10 @@
     <string name="title_communicate">Communicate</string>
     <string name="item_share">Share</string>
     <string name="item_introduce">Introduce</string>
+    <string name="btn_prev">Previous</string>
+    <string name="btn_play">Play</string>
+    <string name="btn_skip">Stop</string>
+    <string name="fav_add">Next</string>
+    <string name="introduce">Youtube Background application was developed by [DN_OE20_Android] Nguyen Ngoc Tuyen - Trainee in Sun* Inc.</string>
+    <string name="title_introduce">Introduce</string>
 </resources>

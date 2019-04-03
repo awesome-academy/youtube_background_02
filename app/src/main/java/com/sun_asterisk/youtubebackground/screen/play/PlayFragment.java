@@ -68,6 +68,7 @@ public class PlayFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mPlayService = ((MainActivity) Objects.requireNonNull(getActivity())).getService();
+        mPlayService.setVideo(mVideos, mPosition);
         setViewYoutubePlayer();
         FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
         mPlayService.playVideo(mPosition, fragmentTransaction);

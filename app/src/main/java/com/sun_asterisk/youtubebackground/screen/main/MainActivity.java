@@ -1,6 +1,8 @@
 package com.sun_asterisk.youtubebackground.screen.main;
 
 import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -9,6 +11,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -25,6 +28,10 @@ public class MainActivity extends AppCompatActivity
 
     private ServiceConnection mConnection;
     private PlayService mService;
+
+    public static Intent newInstance(Context context) {
+        return new Intent(context, MainActivity.class);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,11 +113,21 @@ public class MainActivity extends AppCompatActivity
             case R.id.navigationShare:
                 break;
             case R.id.navigationIntroduce:
+                setIntroduces();
                 break;
         }
         DrawerLayout drawer = findViewById(R.id.drawerLayout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void setIntroduces() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.title_introduce);
+        builder.setMessage(R.string.introduce);
+        builder.setCancelable(true);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     @Override
